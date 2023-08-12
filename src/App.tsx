@@ -1,15 +1,15 @@
 import {
   Button,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
   InputLabel,
   OutlinedInput,
   FormControl,
-  useFormControl,
+  Box,
 } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { customAlphabet } from "nanoid";
 import { FormEventHandler, useState } from "react";
-import { customAlphabet, nanoid } from "nanoid";
+
+import * as xlsx from "xlsx";
 
 function App() {
   const [formState, setFormState] = useState({
@@ -17,6 +17,18 @@ function App() {
     codeLength: 14,
     codeCount: 10,
   });
+
+  const [codes, setCodes] = useState([] as { code: string }[]);
+
+  const gridColumns: GridColDef[] = [
+    {
+      field: "code",
+      headerName: "Code",
+      sortable: true,
+      colSpan: 2,
+      filterable: true,
+    },
+  ];
 
   const handle: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
@@ -28,19 +40,26 @@ function App() {
     data.codeLength = Number(data.codeLength);
     data.codeCount = Number(data.codeCount);
 
-    console.log(data);
-
     // return;
     const generator = customAlphabet(data.charSet, data.codeLength);
 
-    const codes = Array.from({ length: data.codeCount }).map(() => generator());
+    const codes = Array.from({ length: data.codeCount }).map(() => ({
+      code: generator(),
+    }));
 
-    console.log(codes);
+    setCodes(codes);
+  };
+
+  const exportCodes = (codes: { code: string }[]) => {
+    const sheet = xlsx.utils.json_to_sheet(codes);
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, sheet);
+    xlsx.writeFile(workbook, `Codes ${new Date().toLocaleString()}.xlsx`);
   };
 
   return (
-    <section className="w-screen">
-      <header>
+    <section className="w-screen h-screen">
+      <header className="min-h-[20%]">
         <h1>Code Generator</h1>
       </header>
 
@@ -83,6 +102,24 @@ function App() {
             Generate
           </Button>
         </form>
+
+        <section className="grid h-[500px]">
+          <DataGrid
+            columns={gridColumns}
+            rows={codes}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 25 },
+              },
+            }}
+            getRowId={(row) => row.code}
+            pageSizeOptions={[5, 10, 25, 50, 100, 250, 500, 1000]}
+            filterMode="client"
+          />
+        </section>
+        <Button variant="contained" onClick={() => exportCodes(codes)}>
+          Export
+        </Button>
       </main>
 
       <footer></footer>
