@@ -72,7 +72,7 @@ function App() {
             <InputLabel>Number Of Codes</InputLabel>
             <OutlinedInput
               type="number"
-              label="Code Count"
+              label="Number Of Codes"
               name="codeCount"
               required
               defaultValue={formState.codeCount}
