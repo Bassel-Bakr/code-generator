@@ -1,21 +1,34 @@
-import {
-  Button,
-  InputLabel,
-  OutlinedInput,
-  FormControl,
-  Box,
-} from "@mui/material";
+import { Button, InputLabel, OutlinedInput, FormControl } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { customAlphabet } from "nanoid";
-import { FormEventHandler, useState } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import * as xlsx from "xlsx";
 
+type FormData = {
+  charSet: string;
+  codeLength: number;
+  codeCount: number;
+};
+
 function App() {
-  const [formState, setFormState] = useState({
-    charSet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  const defaultState: FormData = {
+    charSet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
     codeLength: 14,
-    codeCount: 10,
+    codeCount: 100,
+  };
+
+  const defaultValues: FormData = {
+    charSet: localStorage.getItem("charSet") ?? defaultState.charSet,
+    codeLength:
+      Number(localStorage.getItem("codeLength")) || defaultState.codeLength,
+    codeCount:
+      Number(localStorage.getItem("codeCount")) || defaultState.codeCount,
+  };
+
+  const { register, handleSubmit, reset } = useForm<FormData>({
+    defaultValues,
   });
 
   const [codes, setCodes] = useState([] as { code: string }[]);
@@ -31,17 +44,12 @@ function App() {
     },
   ];
 
-  const handle: FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target as HTMLFormElement);
-    const data = Object.fromEntries(
-      formData.entries()
-    ) as unknown as typeof formState;
+  const handleForm = (data: FormData) => {
+    // Save to local storage
+    Object.entries(data).forEach(([key, value]) =>
+      localStorage.setItem(key, String(value))
+    );
 
-    data.codeLength = Number(data.codeLength);
-    data.codeCount = Number(data.codeCount);
-
-    // return;
     const generator = customAlphabet(data.charSet, data.codeLength);
 
     const codes = Array.from({ length: data.codeCount }).map(() => ({
@@ -49,6 +57,11 @@ function App() {
     }));
 
     setCodes(codes);
+  };
+
+  const resetForm = () => {
+    localStorage.clear();
+    reset(defaultState);
   };
 
   const exportCodes = (codes: { code: string }[]) => {
@@ -59,7 +72,7 @@ function App() {
   };
 
   return (
-    <section className="w-screen h-screen">
+    <section className="w-screen">
       <header className="flex items-center h-28 bg-blue-50 border border-b-slate-300">
         <h1 className="text-4xl font-bold">Code Generator</h1>
       </header>
@@ -67,16 +80,15 @@ function App() {
       <main className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto">
         <form
           className="box-border p-2 grid grid-cols-2 grid-rows-[min-content] gap-6"
-          onSubmit={handle}
+          onSubmit={handleSubmit((data) => handleForm(data))}
         >
           <FormControl className="col-span-full">
             <InputLabel>Character Set</InputLabel>
             <OutlinedInput
               type="text"
               label="Character Set"
-              name="charSet"
+              {...register("charSet")}
               required
-              defaultValue={formState.charSet}
             />
           </FormControl>
 
@@ -85,9 +97,8 @@ function App() {
             <OutlinedInput
               type="number"
               label="Code Length"
-              name="codeLength"
+              {...register("codeLength", { valueAsNumber: true, min: 1 })}
               required
-              defaultValue={formState.codeLength}
             />
           </FormControl>
 
@@ -96,22 +107,28 @@ function App() {
             <OutlinedInput
               type="number"
               label="Number Of Codes"
-              name="codeCount"
+              {...register("codeCount", { valueAsNumber: true, min: 1 })}
               required
-              defaultValue={formState.codeCount}
             />
           </FormControl>
 
-          <Button
-            variant="contained"
-            type="submit"
-            className="col-span-full self-end"
-          >
-            Generate
-          </Button>
+          <div className="col-span-full grid grid-cols-2 gap-6 self-end">
+            <Button
+              variant="contained"
+              color="warning"
+              type="button"
+              onClick={() => resetForm()}
+            >
+              Reset
+            </Button>
+
+            <Button variant="contained" type="submit">
+              Generate
+            </Button>
+          </div>
         </form>
 
-        <section className="box-border p-2 grid h-[500px]">
+        <section className="box-border p-2 grid h-[760px]">
           <DataGrid
             columns={gridColumns}
             rows={codes}
