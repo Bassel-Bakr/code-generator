@@ -27,6 +27,7 @@ function App() {
       sortable: true,
       colSpan: 2,
       filterable: true,
+      cellClassName: "cell",
     },
   ];
 
@@ -63,7 +64,7 @@ function App() {
         <h1 className="text-4xl font-bold">Code Generator</h1>
       </header>
 
-      <main className="grid grid-cols-1 md:grid-cols-2 mx-auto">
+      <main className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto">
         <form
           className="box-border p-2 grid grid-cols-2 grid-rows-[min-content] gap-6"
           onSubmit={handle}

@@ -6,3 +6,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.cell {
+  min-width: fit-content !important;
+  max-width: fit-content !important;
+}
