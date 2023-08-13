@@ -59,13 +59,16 @@ function App() {
 
   return (
     <section className="w-screen h-screen">
-      <header className="min-h-[20%]">
-        <h1>Code Generator</h1>
+      <header className="flex items-center h-28 bg-blue-50 border border-b-slate-300">
+        <h1 className="text-4xl font-bold">Code Generator</h1>
       </header>
 
-      <main className="mx-auto">
-        <form className="flex flex-col gap-3" onSubmit={handle}>
-          <FormControl>
+      <main className="grid grid-cols-1 md:grid-cols-2 mx-auto">
+        <form
+          className="box-border p-2 grid grid-cols-2 grid-rows-[min-content] gap-6"
+          onSubmit={handle}
+        >
+          <FormControl className="col-span-full">
             <InputLabel>Character Set</InputLabel>
             <OutlinedInput
               type="text"
@@ -98,12 +101,16 @@ function App() {
             />
           </FormControl>
 
-          <Button variant="contained" type="submit">
+          <Button
+            variant="contained"
+            type="submit"
+            className="col-span-full self-end"
+          >
             Generate
           </Button>
         </form>
 
-        <section className="grid h-[500px]">
+        <section className="box-border p-2 grid h-[500px]">
           <DataGrid
             columns={gridColumns}
             rows={codes}
@@ -116,10 +123,15 @@ function App() {
             pageSizeOptions={[5, 10, 25, 50, 100, 250, 500, 1000]}
             filterMode="client"
           />
+
+          <Button
+            variant="contained"
+            className="self-end"
+            onClick={() => exportCodes(codes)}
+          >
+            Export
+          </Button>
         </section>
-        <Button variant="contained" onClick={() => exportCodes(codes)}>
-          Export
-        </Button>
       </main>
 
       <footer></footer>
