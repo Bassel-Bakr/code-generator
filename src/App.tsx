@@ -70,12 +70,12 @@ function App() {
   };
 
   return (
-    <section className="w-screen">
-      <header className="flex items-center h-28 bg-blue-50 border border-b-slate-300">
-        <h1 className="text-4xl font-bold">Code Generator</h1>
+    <section className="box-border flex-1 flex flex-col gap-2">
+      <header className="box-border px-4 flex flex-grow-[20%] items-center h-28 bg-blue-100 border border-b-slate-300">
+        <h1 className="text-3xl font-bold">Code Generator</h1>
       </header>
 
-      <main className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-auto">
+      <main className="w-full flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-[86vh] gap-4 mx-auto">
         <form
           className="box-border p-2 grid grid-cols-2 grid-rows-[min-content] gap-6"
           onSubmit={handleSubmit((data) => handleForm(data))}
@@ -126,19 +126,21 @@ function App() {
           </div>
         </form>
 
-        <section className="box-border p-2 grid h-[760px]">
-          <DataGrid
-            columns={gridColumns}
-            rows={codes}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 25 },
-              },
-            }}
-            getRowId={(row) => row.code}
-            pageSizeOptions={[5, 10, 25, 50, 100, 250, 500, 1000]}
-            filterMode="client"
-          />
+        <section className="box-border p-2 grid h-full">
+          <div className="h-full overflow-auto">
+            <DataGrid
+              columns={gridColumns}
+              rows={codes}
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 25 },
+                },
+              }}
+              getRowId={(row) => row.code}
+              pageSizeOptions={[5, 10, 25, 50, 100, 250, 500, 1000]}
+              filterMode="client"
+            />
+          </div>
 
           <Button
             variant="contained"
