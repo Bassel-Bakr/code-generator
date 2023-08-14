@@ -1,10 +1,9 @@
 import { Button, InputLabel, OutlinedInput, FormControl } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { customAlphabet } from "nanoid";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-
-import * as xlsx from "xlsx";
+import { Context } from "./Context";
 
 type FormData = {
   charSet: string;
@@ -13,6 +12,8 @@ type FormData = {
 };
 
 function App() {
+  const { documentService, codeService } = useContext(Context);
+
   const defaultState: FormData = {
     charSet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
     codeLength: 14,
@@ -50,10 +51,13 @@ function App() {
       localStorage.setItem(key, String(value))
     );
 
-    const generator = customAlphabet(data.charSet, data.codeLength);
+    const generateCode = codeService.createGenerator(
+      data.charSet,
+      data.codeLength
+    );
 
     const codes = Array.from({ length: data.codeCount }).map(() => ({
-      code: generator(),
+      code: generateCode(),
     }));
 
     setCodes(codes);
@@ -65,10 +69,7 @@ function App() {
   };
 
   const exportCodes = (codes: { code: string }[]) => {
-    const sheet = xlsx.utils.json_to_sheet(codes);
-    const workbook = xlsx.utils.book_new();
-    xlsx.utils.book_append_sheet(workbook, sheet);
-    xlsx.writeFile(workbook, `Codes ${new Date().toLocaleString()}.xlsx`);
+    documentService.exportData(codes, `Codes ${new Date().toLocaleString()}`);
   };
 
   return (
