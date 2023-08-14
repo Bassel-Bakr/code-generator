@@ -75,7 +75,7 @@ function App() {
         <h1 className="text-3xl font-bold">Code Generator</h1>
       </header>
 
-      <main className="w-full flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-[86vh] gap-4 mx-auto">
+      <main className="w-full flex-1 grid grid-cols-1 md:grid-cols-2 grid-rows-[90vh] gap-4 mx-auto">
         <form
           className="box-border p-2 grid grid-cols-2 grid-rows-[min-content] gap-6"
           onSubmit={handleSubmit((data) => handleForm(data))}
@@ -120,13 +120,13 @@ function App() {
               Reset
             </Button>
 
-            <Button variant="contained" type="submit">
+            <Button variant="outlined" type="submit">
               Generate
             </Button>
           </div>
         </form>
 
-        <section className="box-border p-2 grid h-full">
+        <section className="box-border p-2 flex-1 flex flex-col gap-4 h-full">
           <div className="h-full overflow-auto">
             <DataGrid
               columns={gridColumns}
@@ -144,7 +144,7 @@ function App() {
 
           <Button
             variant="contained"
-            className="self-end"
+            className="items-stretch"
             onClick={() => exportCodes(codes)}
           >
             Export
