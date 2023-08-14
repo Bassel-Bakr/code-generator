@@ -1,4 +1,10 @@
-import { Button, InputLabel, OutlinedInput, FormControl } from "@mui/material";
+import {
+  Button,
+  InputLabel,
+  OutlinedInput,
+  FormControl,
+  Tooltip,
+} from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -111,18 +117,22 @@ function App() {
           </FormControl>
 
           <div className="col-span-full grid grid-cols-2 gap-6 self-end">
-            <Button
-              variant="contained"
-              color="warning"
-              type="button"
-              onClick={() => resetForm()}
-            >
-              Reset
-            </Button>
+            <Tooltip title="Reset the form to default values">
+              <Button
+                variant="outlined"
+                color="warning"
+                type="button"
+                onClick={() => resetForm()}
+              >
+                Reset
+              </Button>
+            </Tooltip>
 
-            <Button variant="outlined" type="submit">
-              Generate
-            </Button>
+            <Tooltip title="Generate codes in the table">
+              <Button variant="outlined" type="submit">
+                Generate
+              </Button>
+            </Tooltip>
           </div>
         </form>
 
@@ -142,13 +152,18 @@ function App() {
             />
           </div>
 
-          <Button
-            variant="contained"
-            className="items-stretch"
-            onClick={() => exportCodes(codes)}
-          >
-            Export
-          </Button>
+          <Tooltip title="Export to an excel sheet">
+            <div className="items-stretch">
+              <Button
+                className="w-full"
+                variant="contained"
+                disabled={codes.length === 0}
+                onClick={() => exportCodes(codes)}
+              >
+                Export
+              </Button>
+            </div>
+          </Tooltip>
         </section>
       </main>
 
