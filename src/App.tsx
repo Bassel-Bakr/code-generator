@@ -10,8 +10,14 @@ type FormData = {
   codeCount: number;
 };
 
+type Code = {
+  code: string;
+};
+
 function App() {
   const { documentService, codeService, storageService } = useContext(Context);
+
+  const [codes, setCodes] = useState<Code[]>([]);
 
   const defaultState: FormData = {
     charSet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
@@ -27,8 +33,6 @@ function App() {
   const { register, handleSubmit, reset } = useForm<FormData>({
     defaultValues,
   });
-
-  const [codes, setCodes] = useState([] as { code: string }[]);
 
   const gridColumns: GridColDef[] = [
     {
@@ -49,7 +53,7 @@ function App() {
       data.codeLength
     );
 
-    const codes = Array.from({ length: data.codeCount }, () => ({
+    const codes: Code[] = Array.from({ length: data.codeCount }, () => ({
       code: generateCode(),
     }));
 
@@ -57,11 +61,11 @@ function App() {
   };
 
   const resetForm = () => {
-    storageService.clear();
     reset(defaultState);
+    storageService.clear();
   };
 
-  const exportCodes = (codes: { code: string }[]) => {
+  const exportCodes = (codes: Code[]) => {
     documentService.exportData(codes, `Codes ${new Date().toLocaleString()}`);
   };
 
