@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { DocumentService } from "./services/DocumentService";
 import { CodeService } from "./services/CodeService";
+import { LocalStorageService } from "./services/StorageService";
 
 const appContextValue = getDefaultContextData();
 
@@ -10,6 +11,7 @@ export function getDefaultContextData() {
   return {
     documentService: new DocumentService(),
     codeService: new CodeService(),
+    storageService: new LocalStorageService(),
   };
 }
 

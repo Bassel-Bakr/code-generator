@@ -1,6 +1,5 @@
 import { Button, InputLabel, OutlinedInput, FormControl } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { customAlphabet } from "nanoid";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Context } from "./Context";
@@ -12,7 +11,7 @@ type FormData = {
 };
 
 function App() {
-  const { documentService, codeService } = useContext(Context);
+  const { documentService, codeService, storageService } = useContext(Context);
 
   const defaultState: FormData = {
     charSet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
@@ -21,11 +20,10 @@ function App() {
   };
 
   const defaultValues: FormData = {
-    charSet: localStorage.getItem("charSet") ?? defaultState.charSet,
+    charSet: storageService.readString("charSet") ?? defaultState.charSet,
     codeLength:
-      Number(localStorage.getItem("codeLength")) || defaultState.codeLength,
-    codeCount:
-      Number(localStorage.getItem("codeCount")) || defaultState.codeCount,
+      storageService.readNumber("codeLength") ?? defaultState.codeLength,
+    codeCount: storageService.readNumber("codeCount") ?? defaultState.codeCount,
   };
 
   const { register, handleSubmit, reset } = useForm<FormData>({
@@ -46,9 +44,8 @@ function App() {
   ];
 
   const handleForm = (data: FormData) => {
-    // Save to local storage
     Object.entries(data).forEach(([key, value]) =>
-      localStorage.setItem(key, String(value))
+      storageService.write(key, value)
     );
 
     const generateCode = codeService.createGenerator(
@@ -64,7 +61,7 @@ function App() {
   };
 
   const resetForm = () => {
-    localStorage.clear();
+    storageService.clear();
     reset(defaultState);
   };
 
