@@ -20,10 +20,8 @@ function App() {
   };
 
   const defaultValues: FormData = {
-    charSet: storageService.readString("charSet") ?? defaultState.charSet,
-    codeLength:
-      storageService.readNumber("codeLength") ?? defaultState.codeLength,
-    codeCount: storageService.readNumber("codeCount") ?? defaultState.codeCount,
+    ...defaultState,
+    ...storageService.readObject<FormData>("form"),
   };
 
   const { register, handleSubmit, reset } = useForm<FormData>({
@@ -44,16 +42,14 @@ function App() {
   ];
 
   const handleForm = (data: FormData) => {
-    Object.entries(data).forEach(([key, value]) =>
-      storageService.write(key, value)
-    );
+    storageService.write("form", data);
 
     const generateCode = codeService.createGenerator(
       data.charSet,
       data.codeLength
     );
 
-    const codes = Array.from({ length: data.codeCount }).map(() => ({
+    const codes = Array.from({ length: data.codeCount }, () => ({
       code: generateCode(),
     }));
 
