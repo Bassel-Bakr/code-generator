@@ -1,3 +1,7 @@
+# Description
+
+A small app that generates UUIDs based on a given alphabet and length.
+
 # Tauri + React + Typescript
 
 This template should help get you started developing with Tauri, React and Typescript in Vite.
